@@ -1,0 +1,69 @@
+---
+- hosts: all
+  vars:
+    - pip_packages:
+      - { name: pip, version: latest, install: true }
+      - { name: setuptools, version: latest, install: true }
+      - { name: docker-py, version: latest, install: true }
+      - { name: docker-compose, version: "1.9.0", install: true }
+    - temp_build_path: '/tmp/WatchRuMonitoting'
+  tasks:
+    - name: add docker apt-key
+      apt_key:
+        keyserver: hkp://p80.pool.sks-keyservers.net:80
+        state: present
+        id: 58118E89F3A912897C070ADBF76221572C52609D
+      become: true
+      become_user: root
+    - name: add repository
+      apt_repository:
+        repo: deb https://apt.dockerproject.org/repo ubuntu-xenial main
+        state: present
+      become: true
+      become_user: root
+    - name: install docker engine
+      apt:
+        update_cache: yes
+        state: latest
+        name: docker-engine
+      become: true
+      become_user: root
+    - name: Upgrade latest pip, setuptools, docker-py and docker-compose with pip
+      pip:
+        name: "{{ item.name }}"
+        state: latest
+      with_items:
+        - "{{ pip_packages }}"
+      when: (item.install and item.version == "latest")
+      become: true
+      become_user: root
+    - name: install versioned packages
+      pip:
+        name: "{{ item.name }}"
+        version: "{{ item.version }}"
+      with_items:
+        - "{{ pip_packages }}"
+      when: (item.install and item.version != "latest" )
+      become: true
+      become_user: root
+    - name: push code
+      synchronize:
+        src: ../../
+        dest: "{{temp_build_path}}"
+        recursive: yes
+        archive: yes
+    - name: move config
+      command: mv "{{temp_build_path}}"/config.ini /data_watch_ru
+      become: true
+      become_user: root
+    - name: docker-compose up
+      docker_service:
+        build: yes
+        restarted: true
+        project_src: "{{temp_build_path}}"
+      become: true
+      become_user: root
+    - name: remove source code
+      file:
+        path: "{{temp_build_path}}"
+        state: absent

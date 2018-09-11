@@ -1,0 +1,5 @@
+selenium==3.8.0
+sqlalchemy
+pysqlcipher3
+pillow
+telepot
