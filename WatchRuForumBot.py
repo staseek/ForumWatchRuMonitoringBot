@@ -37,7 +37,7 @@ def main():
                                     theme_to_send.last_update,
                                     theme_to_send.theme_id)
                     for chat_id in [x.chat_id for x in session.query(Chat).filter(Chat.admin == True).all()]:
-                        regexes = session.query(Chat).filter(Chat.chat_id==chat_id).all()
+                        regexes = session.query(Regexes).filter(Regexes.chat_id==chat_id).all()
                         if any([re.search(y.regex, theme_to_send.theme_name) for y in regexes]):
                             await bot.sendMessage(chat_id=chat_id, text=message)
                             try:
