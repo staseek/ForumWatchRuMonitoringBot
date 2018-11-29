@@ -12,6 +12,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.common.proxy import Proxy, ProxyType
 
 def json_serial(obj):
     """JSON serializer for objects not serializable by default json code"""
@@ -34,26 +35,29 @@ class WatchRuForumScrapper:
             started = False
             while not started:
                 try:
-                    self.driver = webdriver.Remote("http://chromebrowser:4444/wd/hub", DesiredCapabilities.CHROME)
+                    capabilities = dict(webdriver.DesiredCapabilities.CHROME.copy())
+                    proxy = Proxy()
+                    proxy.socks_proxy = "socks5://tor:9055"
+                    self.driver = webdriver.Remote("http://chromebrowser:4444/wd/hub", desired_capabilities=capabilities)
                     started = True
                 except Exception as e:
                     logging.exception(e)
                     time.sleep(10)
         self.driver.get('http://forum.watch.ru')
-        self._login(login, password)
+        # self._login(login, password)
 
-    def _login(self, login, password):
-        try:
-            login_field = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, "navbar_username")))
-            password_field = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, "navbar_password")))
-            login_field.send_keys(login)
-            password_field.send_keys(password)
-            button = self.driver.find_element_by_xpath("/html/body/div[2]/div/div/table[3]/tbody/tr/td[2]/form/table/tbody/tr[2]/td[3]/input")
-            button.click()
-            success_username_field = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, "/html/body/div[2]/div/div/table[3]/tbody/tr/td[2]/div/strong/a")))
-        except Exception as e:
-            logging.exception(e)
+    # def _login(self, login, password):
+    #     try:
+    #         login_field = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, "navbar_username")))
+    #         password_field = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, "navbar_password")))
+    #         login_field.send_keys(login)
+    #         password_field.send_keys(password)
+    #         button = self.driver.find_element_by_xpath("/html/body/div[2]/div/div/table[3]/tbody/tr/td[2]/form/table/tbody/tr[2]/td[3]/input")
+    #         button.click()
+    #         success_username_field = WebDriverWait(self.driver, 10).until(
+    #             EC.presence_of_element_located((By.XPATH, "/html/body/div[2]/div/div/table[3]/tbody/tr/td[2]/div/strong/a")))
+    #     except Exception as e:
+    #         logging.exception(e)
 
     def get_list_themes(self, section_id):
         if section_id is None:
@@ -104,11 +108,11 @@ class WatchRuForumScrapper:
     def close(self):
         self.closed = True
         if self.driver:
-            self.driver.close()
+            self.driver.quit()
 
     def __del__(self):
         if not self.closed:
-            self.close()
+            self.quit()
 
 
 def scrape(scrapper):

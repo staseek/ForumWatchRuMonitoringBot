@@ -39,5 +39,13 @@ class Regexes(config.Base):
     regex = Column(Text)
 
 
+class SubscriptionChatSection(config.Base):
+    __tablename__ = 'subscriptions'
+    __table_args__ = {'sqlite_autoincrement': True}
+    id = Column(Text, primary_key=True, default=lambda: uuid.uuid4().hex)
+    chat_id = Column(Integer)
+    section_id = Column(Integer)
+
+
 # config.Base.metadata.drop_all(config.engine)
 config.Base.metadata.create_all(config.engine)

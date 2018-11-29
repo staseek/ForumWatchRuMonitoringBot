@@ -25,15 +25,15 @@ def main():
                 for theme_to_send in themes_to_send:
                     # print(theme_to_send)
                     if theme_to_send.was_updated:
-                        message = '''В секции форума {} обновилась тема:\n {}\n Обвнолено: {}\nurl: http://forum.watch.ru/showthread.php?t={}'''\
-                            .format(theme_to_send.section,
-                                    theme_to_send.theme_name,
+                        message = '''В секции форума **{}** обновилась тема:\n **{}**\n __Обновлена__: {}\nurl: http://forum.watch.ru/showthread.php?t={}'''\
+                            .format(theme_to_send.section.replace('"', ''),
+                                    theme_to_send.theme_name.replace('http://forum.watch.ru/images/market-question.png', ''),
                                     theme_to_send.last_update,
                                     theme_to_send.theme_id)
                     else:
-                        message = '''В секции форума {} добавлена тема:\n {}\n Добавлена: {}\nurl: http://forum.watch.ru/showthread.php?t={}''' \
-                            .format(theme_to_send.section,
-                                    theme_to_send.theme_name,
+                        message = '''В секции форума **{}** добавлена тема:\n **{}**\n __Добавлена__: {}\nurl: http://forum.watch.ru/showthread.php?t={}''' \
+                            .format(theme_to_send.section.replace('"', ''),
+                                    theme_to_send.theme_name.replace('http://forum.watch.ru/images/market-question.png', ''),
                                     theme_to_send.last_update,
                                     theme_to_send.theme_id)
                     for chat_id in [x.chat_id for x in session.query(Chat).filter(Chat.admin == True).all()]:
@@ -88,6 +88,8 @@ def main():
                 except Exception as e:
                     logging.exception(e)
                     session.rollback()
+            elif command.startswith('/client'):
+                passw = re.search('\/admin\s+(?P<passw>\w+)', msg['text'])
             elif command.startswith('/admin'):
                 passw = re.search('\/admin\s+(?P<passw>\w+)', msg['text'])
                 if passw and passw.group('passw') == config.BOT_ADMIN_PASSWORD:

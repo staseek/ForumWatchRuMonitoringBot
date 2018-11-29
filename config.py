@@ -27,6 +27,7 @@ if not os.path.exists(DATA_DIRECTORY):
 
 BOT_API_TOKEN = config['Telegram']['BOT_API_TOKEN']
 BOT_ADMIN_PASSWORD = config['Telegram']['BOT_ADMIN_PASSWORD']
+BOT_CLIENT_PASSWORD = config['Telegram']['CLIENT_PASSWORD']
 
 LOGIN = config['Forum']['LOGIN']
 PASSWORD = config['Forum']['PASSWORD']
@@ -39,5 +40,5 @@ engine = create_engine('sqlite+pysqlcipher://:{0}@/{1}?cipher=aes-256-cfb&kdf_it
 Session = sessionmaker(bind=engine)
 
 TIME_SLEEP_SENDER = 1 * 60
-TIME_QUANT = 10 * 60
+TIME_QUANT = 15 * 60
 

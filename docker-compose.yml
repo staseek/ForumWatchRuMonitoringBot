@@ -2,8 +2,8 @@ version: "2"
 services:
   chromebrowser:
     image: selenium/standalone-chrome:3.12.0-cobalt
-    ports:
-      - "4444:4444"
+#    ports:
+#    - "4444:4444"
     networks:
       - watchrunet
     restart: always
@@ -28,6 +28,14 @@ services:
     restart: always
     networks:
       - watchrunet
+  tor:
+    image: dperson/torproxy
+#    ports:
+#    - "9050:9055"
+    networks:
+      - watchrunet
+
 
 networks:
   watchrunet:
+      driver: bridge

@@ -67,3 +67,11 @@
       file:
         path: "{{temp_build_path}}"
         state: absent
+#   ansible 2.8 working and news
+#    - name: Prune everything
+#      docker_prune:
+#        containers: yes
+#        images: yes
+#        networks: yes
+#        volumes: yes
+#        builder_cache: yes
