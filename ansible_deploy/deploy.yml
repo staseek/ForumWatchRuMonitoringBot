@@ -67,6 +67,10 @@
       file:
         path: "{{temp_build_path}}"
         state: absent
+    - name: docker system prune
+      command: "docker system prune -f"
+      become: true
+      become_user: root
 #   ansible 2.8 working and news
 #    - name: Prune everything
 #      docker_prune:

@@ -39,7 +39,7 @@ def main():
                     for chat_id in [x.chat_id for x in session.query(Chat).filter(Chat.admin == True).all()]:
                         regexes = session.query(Regexes).filter(Regexes.chat_id==chat_id).all()
                         if any([re.search(y.regex, theme_to_send.theme_name) for y in regexes]):
-                            await bot.sendMessage(chat_id=chat_id, text=message, parse_mode='html')
+                            await bot.sendMessage(chat_id=chat_id, text=message, parse_mode='markdown')
                             try:
                                 with open(theme_to_send.screenshot_path, 'rb') as cf:
                                     await bot.sendDocument(chat_id=chat_id, document=cf, caption=theme_to_send.theme_name[:50])
