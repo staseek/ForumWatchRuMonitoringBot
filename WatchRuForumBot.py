@@ -25,13 +25,13 @@ def main():
                 for theme_to_send in themes_to_send:
                     # print(theme_to_send)
                     if theme_to_send.was_updated:
-                        message = '''В секции форума **{}** обновилась тема:\n **{}**\n __Обновлена__: {}\nurl: http://forum.watch.ru/showthread.php?t={}'''\
+                        message = '''В секции форума <b>{}</b> обновилась тема:\n <i>{}</i>\n __Обновлена__: {}\nurl: http://forum.watch.ru/showthread.php?t={}'''\
                             .format(theme_to_send.section.replace('"', ''),
                                     theme_to_send.theme_name.replace('http://forum.watch.ru/images/market-question.png', ''),
                                     theme_to_send.last_update,
                                     theme_to_send.theme_id)
                     else:
-                        message = '''В секции форума **{}** добавлена тема:\n **{}**\n __Добавлена__: {}\nurl: http://forum.watch.ru/showthread.php?t={}''' \
+                        message = '''В секции форума <b>{}</b> добавлена тема:\n <i>{}</i>\n __Добавлена__: {}\nurl: http://forum.watch.ru/showthread.php?t={}''' \
                             .format(theme_to_send.section.replace('"', ''),
                                     theme_to_send.theme_name.replace('http://forum.watch.ru/images/market-question.png', ''),
                                     theme_to_send.last_update,
@@ -39,7 +39,7 @@ def main():
                     for chat_id in [x.chat_id for x in session.query(Chat).filter(Chat.admin == True).all()]:
                         regexes = session.query(Regexes).filter(Regexes.chat_id==chat_id).all()
                         if any([re.search(y.regex, theme_to_send.theme_name) for y in regexes]):
-                            await bot.sendMessage(chat_id=chat_id, text=message, parse_mode='markdown')
+                            await bot.sendMessage(chat_id=chat_id, text=message, parse_mode='html')
                             try:
                                 with open(theme_to_send.screenshot_path, 'rb') as cf:
                                     await bot.sendDocument(chat_id=chat_id, document=cf, caption=theme_to_send.theme_name[:50])
